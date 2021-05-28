@@ -1,3 +1,4 @@
+// Nome: Victor Pereira Moura
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
@@ -6,20 +7,21 @@
 using namespace std;
 
 class Expression
-{ public:
-    Expression(string s);
-    void setInfix(string s);
-    string getInfix();
-    string getPostfix();
-    int getValue();
+{
+public:
+  Expression(string s);
+  void setInfix(string s);
+  string getInfix();
+  string getPostfix();
+  int getValue();
 
-  private:
-    string infix;   // expressao na notacao infixa, fornecida pelo usuario
-    string postfix; // expressao infix convertida na notacao posfixa pelo Algoritmo 1
-    int    value;   // valor da expressao posfix obtida pelo Algoritmo 2
+private:
+  string infix;   // expressao na notacao infixa, fornecida pelo usuario
+  string postfix; // expressao infix convertida na notacao posfixa pelo Algoritmo 1
+  int value;      // valor da expressao posfix obtida pelo Algoritmo 2
 
-    void infixToPostfix(); // Implementacao do Algoritmo 1
-    void evalPostfix();    // Implementacao do Algoritmo 2
+  void infixToPostfix(); // Implementacao do Algoritmo 1
+  void evalPostfix();    // Implementacao do Algoritmo 2
 };
 
 #endif /* EXPRESSION_H */

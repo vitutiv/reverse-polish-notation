@@ -2,7 +2,10 @@
 int main()
 {
     //Expression e("2 + 3");
-    Expression e("((3 + 5 * 1) / 8) * 7");
+    //string exp;
+    //cout << "Insira a expressao abaixo: ";
+    //cin >> exp;
+    Expression e("4-");
     //Expression e("4 * (2 + 3)");
 
     cout << "INFIX..: " << e.getInfix() << "\n";

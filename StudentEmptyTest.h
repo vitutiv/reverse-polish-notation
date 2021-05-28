@@ -1,3 +1,4 @@
+// Nome: Victor Pereira Moura
 #ifndef STUDENTEMPTYTEST_H
 #define STUDENTEMPTYTEST_H
 
@@ -5,11 +6,11 @@
 
 class StudentEmptyTest : public CxxTest::TestSuite
 {
-  public:
-    void testVazio()
-    {
-    }
-    /**
+public:
+  void testVazio()
+  {
+  }
+  /**
      * Este arquivo contem um teste vazio. Eh necessario
      * para que a plataforma Web-CAT possa avaliar adequadamente
      * seu programa. 

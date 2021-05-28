@@ -1,3 +1,4 @@
+// Nome: Victor Pereira Moura
 /*
  * StackTemplate.h
  */
@@ -10,25 +11,27 @@
 #include <sstream>
 using namespace std;
 
-template< class StackEntry >
+template <class StackEntry>
 class Stack
-{ public:
-    Stack();
-    bool empty();
-    bool full();
-    void push(StackEntry x);
-    void pop(StackEntry &x);
-    void getTop(StackEntry &x);
-    int  size();
-    void clear();
-    string toString();
-  private:
-    static const int MaxStack = 100;
-    int top;                       // topo da pilha
-    StackEntry entry[MaxStack+1];  // vetor com elementos
+{
+public:
+  Stack();
+  bool empty();
+  bool full();
+  void push(StackEntry x);
+  void pop(StackEntry &x);
+  void getTop(StackEntry &x);
+  int size();
+  void clear();
+  string toString();
+
+private:
+  static const int MaxStack = 100;
+  int top;                        // topo da pilha
+  StackEntry entry[MaxStack + 1]; // vetor com elementos
 };
 
-template< class StackEntry >
+template <class StackEntry>
 Stack<StackEntry>::Stack()
 // pre-condicao: nenhuma
 // pos-condicao: Pilha eh criada e iniciada como vazia
@@ -36,7 +39,7 @@ Stack<StackEntry>::Stack()
   top = 0;
 }
 
-template< class StackEntry >
+template <class StackEntry>
 bool Stack<StackEntry>::empty()
 // pre-condicao: Pilha ja tenha sido criada
 // pos-condicao: funcao retorna true se a pilha esta vazia; false caso contrario
@@ -44,7 +47,7 @@ bool Stack<StackEntry>::empty()
   return (top == 0);
 }
 
-template< class StackEntry >
+template <class StackEntry>
 bool Stack<StackEntry>::full()
 // pre-condicao: Pilha ja tenha sido criada
 // pos-condicao: funcao retorna true se a pilha esta cheia; false caso contrario
@@ -52,71 +55,74 @@ bool Stack<StackEntry>::full()
   return (top == MaxStack);
 }
 
-template< class StackEntry >
+template <class StackEntry>
 void Stack<StackEntry>::push(StackEntry x)
 // pre-condicao: Pilha S ja tenha sido criada
-// pos-condicao: O item x é armazenado no topo da pilha
+// pos-condicao: O item x ï¿½ armazenado no topo da pilha
 {
   if (full())
-  { cout << "Pilha Cheia" << endl;
+  {
+    cout << "Pilha Cheia" << endl;
     abort();
   }
   top++;
   entry[top] = x;
 }
 
-template< class StackEntry >
+template <class StackEntry>
 void Stack<StackEntry>::pop(StackEntry &x)
-// pre-condicao: Pilha ja tenha sido criada e não esta vazia
+// pre-condicao: Pilha ja tenha sido criada e nï¿½o esta vazia
 // pos-condicao: O item no topo da pilha eh removido e seu valor retornado na variavel x
 {
   if (empty())
-  { cout << "Pilha Vazia" << endl;
+  {
+    cout << "Pilha Vazia" << endl;
     abort();
   }
   x = entry[top];
   top--;
 }
-
-template< class StackEntry >
+// Nome: Victor Pereira Moura
+template <class StackEntry>
 void Stack<StackEntry>::getTop(StackEntry &x)
-// pre-condicao: Pilha ja tenha sido criada e não esta vazia
+// pre-condicao: Pilha ja tenha sido criada e nï¿½o esta vazia
 // pos-condicao: O item no topo da pilha eh retornado na variavel x; pilha permanece inalterada
 {
   if (empty())
-  { cout << "Pilha Vazia" << endl;
+  {
+    cout << "Pilha Vazia" << endl;
     abort();
   }
   x = entry[top];
 }
 
-
-
-template< class StackEntry >
+template <class StackEntry>
 int Stack<StackEntry>::size()
 // pre-condicao: Pilha ja tenha sido criada
 // pos-condicao: retorna o numero de elementos da pilha
-{  return top;
+{
+  return top;
 }
 
-
-template< class StackEntry >
+template <class StackEntry>
 void Stack<StackEntry>::clear()
 // pre-condicao: Pilha ja tenha sido criada
 // pos-condicao: Esvazia o conteudo da pilha
-{  top = 0;
+{
+  top = 0;
 }
 
-template< class StackEntry >
+template <class StackEntry>
 string Stack<StackEntry>::toString()
 // pre-condicao: Pilha ja tenha sido criada
 // pos-condicao: Transforma conteudo em uma string separada por espacos (Topo a direita)
-{  int i;
-   stringstream ss;
-   
-   for(i=1; i<=top; i++)
-       ss << entry[i];
-   return ss.str();       
+{
+  int i;
+  stringstream ss;
+
+  for (i = 1; i <= top; i++)
+    ss << entry[i];
+  return ss.str();
 }
 
 #endif /* STACKTEMPLATE_H */
