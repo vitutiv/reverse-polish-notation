@@ -1,4 +1,4 @@
-// Nome: Victor Pereira Moura
+// Nomes: Victor Pereira Moura e Vinicius Cruz Menezes
 /*
  * StackTemplate.h
  */

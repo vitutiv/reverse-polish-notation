@@ -5,7 +5,7 @@ int main()
      //string exp;
      //cout << "Insira a expressao abaixo: ";
      //cin >> exp;
-     Expression e("7+3*(8-5)/(1-2)");
+     Expression e("3/2/2");
      //Expression e("4 * (2 + 3)");
      cout << "INFIX..: |" << e.getInfix() << "|"
           << endl;

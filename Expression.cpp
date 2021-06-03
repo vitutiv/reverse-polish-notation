@@ -1,4 +1,4 @@
-// Nome: Victor Pereira Moura
+// Nomes: Victor Pereira Moura e Vinicius Cruz Menezes
 #include "Expression.h"
 using namespace std;
 
@@ -69,12 +69,10 @@ void Expression::infixToPostfix()
   // Para declarar uma pilha usando templates, associe o tipo de dado colocado na mesma
   Stack<char> S; // um pilha de caracteres
   string expressaoInfix = this->getInfix();
-  expressaoInfix += ")";
-  S.push('(');
-  for (int i = 0; i < expressaoInfix.length(); i++)
+  for (size_t position = 0; position < expressaoInfix.length(); position++)
   // Percorrer por todos os caracteres da expressao;
   {
-    char caractereAtual = expressaoInfix[i]; // caractereAtual eh o caractere na posiçao 'i' da expressaoInfix
+    char caractereAtual = expressaoInfix[position]; // caractereAtual eh o caractere na posiçao 'i' da expressaoInfix
     if (isdigit(caractereAtual))
     // Se o caractere for um operando, transferir para a pos-fixa;
     {
@@ -87,31 +85,31 @@ void Expression::infixToPostfix()
       {
         S.push(caractereAtual);
       }
+      else
+      {
+        abort();
+      }
     }
     else if (caractereAtual == ')')
     // Se o caractere eh um parentese direito, retirar os caracteres da pilha e transferi-los para posfixa ate encontrar um parentese esquerdo. Retirar o parentese esquerdo da pilha e descarta-lo.
     {
-      while (S.size() > 0)
-      // Remover todos os itens da pilha
+      while (!S.empty())
+      // Remover todos os itens da pilha ateh encontrar um parentese esquerdo
       {
-        char caracterePilha; // caracterePilha eh o ultimo caractere removido da pilha
-        S.pop(caracterePilha);
-        if (caracterePilha != '(')
-        // Se caracterePilha não for parentese esquerdo, transferir para a pos-fixa
-        {
-          postfix += caracterePilha;
-        }
-        else
-        // Senao, parar e descartar
+        char caracterePilha;
+        S.pop(caracterePilha); // caracterePilha eh o ultimo caractere removido da pilha
+        if (caracterePilha == '(')
+        // SE caracterePilha for parentese esquerdo, ENTÃO parar e descartar.
         {
           break;
         }
+        postfix += caracterePilha;
       }
     }
     else if (caractereAtual == '^' || caractereAtual == '%' || caractereAtual == '+' || caractereAtual == '-' || caractereAtual == '*' || caractereAtual == '/')
-    // Se for operador, transferir para a pilha
+    // SE for operador, transferir para a pilha
     {
-      while (S.size() > 0) // Repetir enquanto houver itens na pilha
+      while (!S.empty()) // Repetir enquanto houver itens na pilha
       {
         char caractereTopo;
         S.getTop(caractereTopo); // caractereTopo eh elemento no topo da pilha.
@@ -129,12 +127,19 @@ void Expression::infixToPostfix()
         S.pop(caractereTopo);
         postfix += caractereTopo;
       }
-      // Inserir Ui na pilha
-      S.push(caractereAtual);
+      if (!S.full())
+      // Inserir caractereAtual na pilha
+      {
+        S.push(caractereAtual);
+      }
+      else
+      {
+        abort();
+      }
     }
   }
   // Transferir os caracteres restantes da pilha para o postfix
-  while (S.size() > 0)
+  while (!S.empty())
   {
     char charX;
     S.pop(charX);
@@ -152,15 +157,23 @@ void Expression::evalPostfix()
   value = 0;
   // Para declarar uma pilha usando templates, associe o tipo de dado colocado na mesma
   Stack<int> S; // um pilha de inteiros
-  for (int i = 0; i < postfix.length(); i++)
+
+  for (size_t position = 0; position < postfix.length(); position++)
   // Percorrer a expressao postfix
   {
-    char caractereAtual = postfix[i];
+    char caractereAtual = postfix[position];
     if (isdigit(caractereAtual))
     // SE for um operando, converter para inteiro e transferir para a pilha
     {
       int caractereAtualPostFixInteiro = caractereAtual - '0';
-      S.push(caractereAtualPostFixInteiro);
+      if (!S.full())
+      {
+        S.push(caractereAtualPostFixInteiro);
+      }
+      else
+      {
+        abort();
+      }
     }
     else if (caractereAtual == '^' || caractereAtual == '%' || caractereAtual == '+' || caractereAtual == '-' || caractereAtual == '*' || caractereAtual == '/')
     // SENAO (SE for um operador), retirar da pilha os dois ultimos operandos, realizar a operaçao e enviar para a pilha o resultado.
@@ -192,8 +205,16 @@ void Expression::evalPostfix()
             S.push(operand1 / operand2);
           }
           else if (caractereAtual == '^')
+          // Se o operando for expoente, realizar o calculo a partir do bloco abaixo:
           {
-            S.push(operand1 ^ operand2);
+            int tempValue = 1; // x^0 = 1
+            for (int vez = 1; vez <= operand2; vez++)
+            // Multiplicar tempValue por operand1, operand2 vezes (ex: 2^3 = 1 * (2*2*2) = 8). Se operand2 = 0, o loop nao sera executado, e tempValue sera 1.
+            {
+              tempValue *= operand1;
+            }
+            // Ao final, transferir resultado (tempValue) para a pilha
+            S.push(tempValue);
           }
           else
           // (%)
@@ -210,7 +231,7 @@ void Expression::evalPostfix()
     }
   }
   // Por fim, transferir o resultado da expressao para value
-  if (S.size() == 1)
+  if (!S.empty())
   {
     S.pop(value);
   }

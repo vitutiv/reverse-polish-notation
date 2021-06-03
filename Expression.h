@@ -1,4 +1,4 @@
-// Nome: Victor Pereira Moura
+// Nomes: Victor Pereira Moura e Vinicius Cruz Menezes
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
