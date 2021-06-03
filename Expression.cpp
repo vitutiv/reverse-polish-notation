@@ -14,7 +14,6 @@ Expression::Expression(string s)
 void Expression::setInfix(string s)
 {
   infix = s;
-  cout << s;
   infixToPostfix();
   evalPostfix();
 }
@@ -70,6 +69,8 @@ void Expression::infixToPostfix()
   // Para declarar uma pilha usando templates, associe o tipo de dado colocado na mesma
   Stack<char> S; // um pilha de caracteres
   string expressaoInfix = this->getInfix();
+  expressaoInfix += ")";
+  S.push('(');
   for (int i = 0; i < expressaoInfix.length(); i++)
   // Percorrer por todos os caracteres da expressao;
   {
@@ -82,7 +83,10 @@ void Expression::infixToPostfix()
     else if (caractereAtual == '(')
     // Se o caractere for um parentese esquerdo, transferir para a pilha;
     {
-      S.push(caractereAtual);
+      if (!S.full())
+      {
+        S.push(caractereAtual);
+      }
     }
     else if (caractereAtual == ')')
     // Se o caractere eh um parentese direito, retirar os caracteres da pilha e transferi-los para posfixa ate encontrar um parentese esquerdo. Retirar o parentese esquerdo da pilha e descarta-lo.
@@ -92,15 +96,15 @@ void Expression::infixToPostfix()
       {
         char caracterePilha; // caracterePilha eh o ultimo caractere removido da pilha
         S.pop(caracterePilha);
-        if (caracterePilha == '(')
-        // Se for parentese esquerdo, parar loop e descartar
-        {
-          break;
-        }
-        else
-        // Senao, transferir caracterePilha para a pos-fixa
+        if (caracterePilha != '(')
+        // Se caracterePilha não for parentese esquerdo, transferir para a pos-fixa
         {
           postfix += caracterePilha;
+        }
+        else
+        // Senao, parar e descartar
+        {
+          break;
         }
       }
     }
@@ -110,42 +114,20 @@ void Expression::infixToPostfix()
       while (S.size() > 0) // Repetir enquanto houver itens na pilha
       {
         char caractereTopo;
-        S.getTop(caractereTopo); // caractereNoTopoDaPilha eh elemento no topo da pilha.
+        S.getTop(caractereTopo); // caractereTopo eh elemento no topo da pilha.
 
-        // Variaveis que armazenam a precedencia de caractereNoTopoDaPilha e de caractereAtual, respectivamente.
+        // Variaveis que armazenam a precedencia de caractereTopo e de caractereAtual, respectivamente.
         int precedenciaCaractereTopo = getPrecedence(caractereTopo);
         int precedenciaCaractereAtual = getPrecedence(caractereAtual);
 
-        switch (caractereAtual)
-        {
-        // Avaliar a precendencia de caractereAtual
-        case '^':
-          precedenciaCaractereAtual = 3;
-          break;
-        case '*':
-        case '/':
-        case '%':
-          precedenciaCaractereAtual = 2;
-          break;
-        case '+':
-        case '-':
-          precedenciaCaractereAtual = 1;
-          break;
-        default:
-          precedenciaCaractereAtual = 0;
-          break;
-        }
-        if (precedenciaCaractereTopo >= precedenciaCaractereAtual && caractereTopo != '(')
-        // SE precedencia de t for maior ou igual Ui OU t nao for parentese esquerdo, ENTAO transferir da pilha para a pos-fixa
-        {
-          S.pop(caractereTopo);
-          postfix += caractereTopo;
-        }
-        else
-        // SENAO, ENTAO parada
+        if (precedenciaCaractereTopo < precedenciaCaractereAtual || caractereTopo == '(')
+        // SE precedencia de t for menor que a de Ui OU t for parentese esquerdo, ENTAO parada
         {
           break;
         }
+        // SENAO, ENTAO transferir da pilha para a pos-fixa
+        S.pop(caractereTopo);
+        postfix += caractereTopo;
       }
       // Inserir Ui na pilha
       S.push(caractereAtual);
@@ -173,64 +155,63 @@ void Expression::evalPostfix()
   for (int i = 0; i < postfix.length(); i++)
   // Percorrer a expressao postfix
   {
-    char Ui = postfix[i];
-    if (isdigit(Ui))
+    char caractereAtual = postfix[i];
+    if (isdigit(caractereAtual))
     // SE for um operando, converter para inteiro e transferir para a pilha
     {
-      int charToInt = Ui - '0';
-      S.push(charToInt);
+      int caractereAtualPostFixInteiro = caractereAtual - '0';
+      S.push(caractereAtualPostFixInteiro);
     }
-    else
-    // SENAO (se for um operador), retirar da pilha os dois ultimos operandos, realizar a operaçao e enviar para a pilha o resultado.
+    else if (caractereAtual == '^' || caractereAtual == '%' || caractereAtual == '+' || caractereAtual == '-' || caractereAtual == '*' || caractereAtual == '/')
+    // SENAO (SE for um operador), retirar da pilha os dois ultimos operandos, realizar a operaçao e enviar para a pilha o resultado.
     {
-
-      // Retirar da pilha os dois ultimos operandos (Last In, First Out)
       int operand1;
-      int operand2 = 0;
-      if (S.size() >= 2)
+      int operand2;
+      // Retirar da pilha os dois ultimos operandos (Last In, First Out)
+      if (!S.empty())
       {
         S.pop(operand2);
-      }
-      else
-      {
-        operand2 = 0;
-      }
-      S.pop(operand1);
-
-      // Calcular soma, subtraçao, multiplicaçao, dividisao, potencia, ou resto da divisao dos dois valores dependendo do operador encontrado, e inserir o resultado na pilha.
-      if (Ui == '+')
-      {
-        S.push(operand1 + operand2);
-      }
-      else if (Ui == '-')
-      {
-        S.push(operand1 - operand2);
-      }
-      else if (Ui == '*')
-      {
-        S.push(operand1 * operand2);
-      }
-      else if (Ui == '/')
-      {
-        S.push(operand1 / operand2);
-      }
-      else if (Ui == '^')
-      {
-        S.push(operand1 ^ operand2);
-      }
-      else if (Ui == '%')
-      {
-        S.push(operand1 % operand2);
-      }
-      else
-      {
-        cout << "Operador '" << Ui << "' nao reconhecido. pulando operaçao... \n";
+        if (!S.empty())
+        {
+          S.pop(operand1);
+          // Calcular soma, subtraçao, multiplicaçao, dividisao, potencia, ou resto da divisao dos dois valores dependendo do operador encontrado, e inserir o resultado na pilha.
+          if (caractereAtual == '+')
+          {
+            S.push(operand1 + operand2);
+          }
+          else if (caractereAtual == '-')
+          {
+            S.push(operand1 - operand2);
+          }
+          else if (caractereAtual == '*')
+          {
+            S.push(operand1 * operand2);
+          }
+          else if (caractereAtual == '/')
+          {
+            S.push(operand1 / operand2);
+          }
+          else if (caractereAtual == '^')
+          {
+            S.push(operand1 ^ operand2);
+          }
+          else
+          // (%)
+          {
+            S.push(operand1 % operand2);
+          }
+        }
       }
     }
+    else
+    {
+      cout << "Caractere '" << caractereAtual << "' invalido. \n";
+      value = 0;
+    }
   }
-  if (S.size() > 0)
+  // Por fim, transferir o resultado da expressao para value
+  if (S.size() == 1)
   {
     S.pop(value);
   }
-  // Por fim, transferir resultado da expressao para value
 }
